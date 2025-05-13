@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Amos Atelier - Handcrafted Builds by [Grandpa's First Name] Amos</title>
+    <meta name="description" content="A personal showcase of handcrafted wooden cabinets, tables, bookshelves, and shelves by artisan [Grandpa's First Name] Amos.">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+
+    <!-- GSAP Core & ScrollTrigger Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #FDFBF5;         /* Softer, Warmer Beige */
+            --bg-secondary: #F5F2EA;       /* Very Light Warm Gray */
+            --bg-content: #FFFFFF;
+            --text-primary: #4A3B31;       /* Rich Dark Brown */
+            --text-secondary: #705F53;     /* Muted Brown */
+            --text-tertiary: #A08C80;      /* Lighter Muted Brown */
+            --primary-color: #8B4513;      /* Saddle Brown / Rich Wood Tone */
+            --primary-color-dark: #7A3D10; /* Darker Wood Tone */
+            --border-color: #E0D8CC;       /* Soft Beige Border */
+            --shadow-soft: 0 6px 20px rgba(74, 59, 49, 0.08);
+            --shadow-md: 0 4px 10px rgba(74, 59, 49, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-primary);
+            font-weight: 600; /* Slightly bolder for headings */
+            margin-bottom: 0.75em;
+        }
+        h1#hero-headline { opacity: 0; } /* For GSAP */
+        h2.section-title-gsap { font-size: 2.5rem; font-weight: 700; line-height: 1.3; opacity: 0; transform: translateY(20px); }
+        @media (min-width: 768px) { h2.section-title-gsap { font-size: 3rem; } }
+
+
+        a { color: var(--primary-color); text-decoration: none; transition: color 0.3s ease; }
+        a:hover { color: var(--primary-color-dark); }
+
+        .gsap-fade-in { opacity: 0; }
+        .gsap-fade-in-up { opacity: 0; transform: translateY(30px); }
+        .hero-headline-word { display: inline-block; overflow: hidden; }
+        .hero-headline-word span { display: inline-block; }
+
+        button, .button {
+             display: inline-block; padding: 0.85rem 2rem; border-radius: 6px; font-weight: 500;
+             font-size: 0.95rem; text-align: center; transition: all 0.3s ease;
+             cursor: pointer; border: 1px solid transparent; font-family: 'Inter', sans-serif; }
+        button:not(.button-secondary), .button:not(.button-secondary) { background-color: var(--primary-color); color: var(--bg-content); border-color: var(--primary-color); box-shadow: var(--shadow-soft); }
+        button:not(.button-secondary):hover, .button:not(.button-secondary):hover { background-color: var(--primary-color-dark); border-color: var(--primary-color-dark); transform: translateY(-2px); box-shadow: var(--shadow-md);}
+        .button-secondary { background-color: transparent; color: var(--primary-color); border-color: var(--primary-color); }
+        .button-secondary:hover { background-color: rgba(139, 69, 19, 0.07); border-color: var(--primary-color-dark); color: var(--primary-color-dark); transform: translateY(-2px); }
+        button:focus, .button:focus { outline: none; box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.3); }
+
+
+        .craft-card { /* Was service-card */
+            padding: 2rem; text-align: center; display: flex; flex-direction: column; height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 8px;
+            background-color: var(--bg-content); box-shadow: var(--shadow-soft); border: 1px solid var(--border-color);
+            opacity: 0; transform: translateY(30px); /* GSAP */
+        }
+        .craft-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+        .craft-card .icon-area { font-size: 2.75rem; color: var(--primary-color); margin-bottom: 1.25rem; line-height: 1; }
+        .craft-card h3 { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.6rem; }
+        .craft-card p { color: var(--text-secondary); margin-bottom: 0; flex-grow: 1; font-size: 0.95rem; }
+
+        .process-step { margin-bottom: 1.5rem; opacity: 0; transform: translateY(20px); } /* GSAP */
+        .process-step .step-number {
+            font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--primary-color);
+            margin-right: 0.75rem; font-weight: 700;
+        }
+        .process-step strong { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--text-primary); }
+
+
+        .portfolio-item img { transition: transform 0.4s ease-out; border-radius: 8px; box-shadow: var(--shadow-soft); }
+        .portfolio-item:hover img { transform: scale(1.05); }
+        .portfolio-item { opacity: 0; transform: scale(0.9); } /* GSAP for gallery items */
+
+        #contact { background-color: var(--bg-secondary); } /* Contrast for contact */
+
+        /* Hero Background Image styling */
+        #hero {
+            position: relative;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            /* Placeholder background color if image fails or for loading */
+            background-color: var(--bg-secondary);
+            color: white; /* Default text color for hero if image is dark */
+        }
+        #hero::before { /* Overlay for text readability */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(42, 30, 22, 0.5); /* Dark brown overlay, adjust opacity */
+            z-index: 1;
+        }
+        #hero > .container { position: relative; z-index: 2; }
+        #hero h1, #hero p { color: #FFFFFF; /* Ensure text is white over image */ }
+        #hero .button { border-color: #FFFFFF; color: #FFFFFF; }
+        #hero .button:hover { background-color: rgba(255,255,255,0.1); }
+        #hero .button-secondary { background-color: transparent; border: 2px solid #FFFFFF; color: #FFFFFF; }
+        #hero .button-secondary:hover { background-color: rgba(255,255,255,0.15); border-color: #FFFFFF; }
+
+        /* Header specific styles for background image */
+        header.sticky-header {
+            background-color: rgba(253, 251, 245, 0.85); /* Semi-transparent --bg-primary */
+            backdrop-blur: 8px;
+        }
+
+        /* Ensure modals and other critical UI elements have appropriate z-index */
+         .modal { z-index: 1000; }
+         header.sticky-header { z-index: 50; } /* Ensure header is above hero content but below modal */
+
+        /* (Keep FAQ, Modal, Hamburger, etc. CSS from Atelier Luxe - they are well-styled and functional) */
+        /* ... Existing FAQ, Modal, Mobile Menu CSS from original index-luxe.html should be here ... */
+        /* For brevity, I'm assuming they are copied. Key elements for GSAP: */
+        .faq-item { opacity: 0; transform: translateY(20px); }
+         @keyframes shake { 0%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)} }
+         .shake-animation { animation: shake 0.4s ease-in-out; }
+         /* Modal Styling (Minimal Light) */
+         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(74, 59, 49, 0.7); animation: fadeInModalBg 0.3s ease-out; }
+         @keyframes fadeInModalBg { from { opacity: 0; } to { opacity: 1; } }
+         .modal-content { background-color: var(--bg-content); color: var(--text-primary); margin: 8% auto; padding: 2.5rem; border: none; width: 90%; max-width: 600px; /* Wider for portfolio details */ border-radius: 8px; box-shadow: 0 10px 30px rgba(74,59,49,0.15); animation: fadeInModalContent 0.4s ease-out; }
+         @keyframes fadeInModalContent { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+         .modal-header h2 { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--text-primary); font-family: 'Playfair Display', serif; }
+         .close-button { color: var(--text-tertiary); background: none; border: none; font-size: 2rem; font-weight: 300; cursor: pointer; transition: color 0.2s ease; line-height: 1; padding: 0.25rem; }
+         .close-button:hover, .close-button:focus { color: var(--text-primary); outline: none; }
+         .modal-body { padding-bottom: 1.5rem; max-height: 60vh; overflow-y: auto; } /* Scrollable modal body */
+         .modal-body form label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.9rem; }
+         .modal-body form input[type="text"], .modal-body form input[type="email"], .modal-body form input[type="tel"], .modal-body form textarea { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--border-color); background-color: var(--bg-content); color: var(--text-primary); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease, box-shadow 0.2s ease; outline: none; }
+         .modal-body form input::placeholder, .modal-body form textarea::placeholder { color: var(--text-tertiary); font-weight: 400; }
+         .modal-body form input[type="text"]:focus, .modal-body form input[type="email"]:focus, .modal-body form input[type="tel"]:focus, .modal-body form textarea:focus { border-color: var(--primary-color); box-shadow: none; }
+         .modal-body form textarea { resize: vertical; min-height: 100px; }
+         .modal-footer { text-align: right; padding-top: 1.5rem; border-top: 1px solid var(--border-color); margin-top: 1.5rem; }
+         /* Portfolio Modal Specific */
+         #portfolio-modal-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 6px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
+         #portfolio-modal-description { line-height: 1.8; }
+
+         /* Form feedback styles */
+        .form-feedback { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.875rem; display: none; }
+        .form-feedback.success { background-color: #f3f9f4; color: #3c763d; border: 1px solid #d6e9c6; display: block; }
+        .form-feedback.error { background-color: #fdf5f5; color: #a94442; border: 1px solid #ebccd1; display: block; }
+        .form-feedback.loading { background-color: #f0f8ff; color: #31708f; border: 1px solid #bce8f1; display: block; }
+
+    </style>
+</head>
+<body class="bg-[--bg-primary] font-inter text-[--text-primary]">
+
+    <header class="sticky-header bg-[--bg-primary]/95 backdrop-blur-sm sticky top-0 border-b border-[--border-color] gsap-fade-in">
+        <div class="container mx-auto px-4 py-5 flex justify-between items-center">
+            <a href="#" class="flex items-center text-2xl font-semibold text-[--text-primary]">
+                <i class="fas fa-drafting-compass mr-3 text-[--primary-color]"></i> <!-- Changed Icon -->
+                <span class="font-['Playfair_Display',serif] tracking-wide">The Amos Atelier</span>
+            </a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#my-craft" class="text-[--text-secondary] hover:text-[--primary-color] transition duration-300 font-medium text-sm">My Craft</a>
+                <a href="#portfolio" class="text-[--text-secondary] hover:text-[--primary-color] transition duration-300 font-medium text-sm">Portfolio</a>
+                <a href="#upcoming-projects" class="text-[--text-secondary] hover:text-[--primary-color] transition duration-300 font-medium text-sm">Upcoming</a>
+                <a href="#artisans-notes" class="text-[--text-secondary] hover:text-[--primary-color] transition duration-300 font-medium text-sm">Notes</a>
+                <a href="#contact" class="text-[--text-secondary] hover:text-[--primary-color] transition duration-300 font-medium text-sm">Contact</a>
+                <button id="contact-button-nav" class="button button-secondary text-xs">Get In Touch</button>
+            </nav>
+            <div class="md:hidden">
+                <button id="hamburger-button" class="text-[--text-secondary] focus:outline-none p-2" aria-label="Toggle Navigation" aria-expanded="false" aria-controls="mobile-menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-[--bg-primary] shadow-md border-t border-[--border-color] py-3" role="menu">
+             <a href="#my-craft" class="block px-4 py-3 text-[--text-secondary] hover:bg-[--bg-secondary] hover:text-[--primary-color] transition duration-300" role="menuitem">My Craft</a>
+             <a href="#portfolio" class="block px-4 py-3 text-[--text-secondary] hover:bg-[--bg-secondary] hover:text-[--primary-color] transition duration-300" role="menuitem">Portfolio</a>
+             <a href="#upcoming-projects" class="block px-4 py-3 text-[--text-secondary] hover:bg-[--bg-secondary] hover:text-[--primary-color] transition duration-300" role="menuitem">Upcoming</a>
+             <a href="#artisans-notes" class="block px-4 py-3 text-[--text-secondary] hover:bg-[--bg-secondary] hover:text-[--primary-color] transition duration-300" role="menuitem">Notes</a>
+            <a href="#contact" class="block px-4 py-3 text-[--text-secondary] hover:bg-[--bg-secondary] hover:text-[--primary-color] transition duration-300" role="menuitem">Contact</a>
+            <div class="px-4 py-3 mt-2 border-t border-[--border-color]">
+                <button id="mobile-contact-button" class="button button-secondary w-full text-center">Get In Touch</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-28 md:py-48" style="background-image: url('https://res.cloudinary.com/diyramdn0/image/upload/v1747109669/Wood-Working-1024x682_gwlkr0.jpg');">
+            <div class="container mx-auto px-4 text-center max-w-3xl">
+                <div class="gsap-fade-in">
+                    <h1 id="hero-headline" class="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                        <!-- JS will populate this -->
+                    </h1>
+                    <p class="text-xl text-gray-100 mb-10 max-w-2xl mx-auto gsap-fade-in" style="opacity:0; animation-delay: 0.5s;">
+                        A creator dedicated to the art of woodworking. Bespoke pieces, built with passion and precision.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 gsap-fade-in" style="opacity:0; animation-delay: 0.7s;">
+                        <a href="#portfolio" class="button">Explore My Work</a>
+                        <a href="#contact" class="button button-secondary">Discuss a Custom Piece</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="my-craft" class="py-20 md:py-28 px-4 bg-[--bg-primary]">
+             <div class="container mx-auto max-w-5xl">
+                <h2 class="section-title-gsap text-center mb-16">My Areas of Expertise</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 services-grid-gsap">
+                    <div class="craft-card">
+                         <div class="icon-area"><i class="fas fa-archive"></i></div> <!-- Box/Archive for Cabinets -->
+                         <h3>Custom Cabinets</h3>
+                         <p>Bespoke cabinetry tailored to your space and style, from kitchen to study.</p>
+                    </div>
+                     <div class="craft-card">
+                         <div class="icon-area"><i class="fas fa-table"></i></div> <!-- Table Icon -->
+                         <h3>Handcrafted Tables</h3>
+                         <p>Dining tables, coffee tables, side tables – each a unique centerpiece.</p>
+                    </div>
+                    <div class="craft-card">
+                        <div class="icon-area"><i class="fas fa-book-open"></i></div> <!-- Book for Bookshelves -->
+                         <h3>Bookshelves & Shelving</h3>
+                         <p>Elegant and sturdy shelving solutions to display your treasures.</p>
+                    </div>
+                     <div class="craft-card">
+                        <div class="icon-area"><i class="fas fa-tools"></i></div> <!-- Tools for General Craft -->
+                         <h3>Specialty Woodwork</h3>
+                         <p>Unique commissions, intricate details, and restoration of cherished pieces.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="process" class="py-20 md:py-28 bg-[--bg-secondary]">
+            <div class="container mx-auto px-4 text-center max-w-3xl">
+                <h2 class="section-title-gsap mb-6">My Creative Process</h2>
+                <p class="text-lg text-[--text-secondary] mb-12 mx-auto gsap-fade-in-up">
+                   From initial spark to finished masterpiece, every step is handled with precision.
+                </p>
+                <ol class="text-left space-y-8 max-w-xl mx-auto process-steps-gsap">
+                     <li class="process-step"> <span class="step-number">1.</span> <span class="text-[--text-secondary]"> <strong class="text-[--text-primary]">Vision & Inspiration:</strong> Getting a basic concept and iterating on the design</span> </li>
+                     <li class="process-step"> <span class="step-number">2.</span> <span class="text-[--text-secondary]"> <strong class="text-[--text-primary]">Design & Material Selection:</strong> Choosing the perfect woods and finishes.</span> </li>
+                     <li class="process-step"> <span class="step-number">3.</span> <span class="text-[--text-secondary]"> <strong class="text-[--text-primary]">Meticulous Construction:</strong> Handcrafting each element with precision and finesse</span> </li>
+                     <li class="process-step"> <span class="step-number">4.</span> <span class="text-[--text-secondary]"> <strong class="text-[--text-primary]">Finishing Touches & Legacy:</strong> Adding the final details that make a piece truly authentic, built to last.</span> </li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-20 md:py-28 px-4 bg-[--bg-primary]">
+            <div class="container mx-auto text-center max-w-6xl">
+                <h2 class="section-title-gsap mb-16">A Glimpse into the Workshop</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 gallery-grid-gsap">
+                    <!-- Placeholder Portfolio Items -->
+                    <div class="portfolio-item"> <img src="https://source.unsplash.com/random/600x400/?woodworking,cabinet" alt="Custom Cabinetry"> </div>
+                    <div class="portfolio-item"> <img src="https://source.unsplash.com/random/600x400/?woodworking,table" alt="Handcrafted Table"> </div>
+                    <div class="portfolio-item"> <img src="https://source.unsplash.com/random/600x400/?woodworking,bookshelf" alt="Bespoke Bookshelf"> </div>
+                    <div class="portfolio-item"> <img src="https://source.unsplash.com/random/600x400/?wood,detail,joint" alt="Woodwork Detail"> </div>
+                    <div class="portfolio-item"> <img src="https://source.unsplash.com/random/600x400/?artisan,wood,craft" alt="Artisan Woodcraft"> </div>
+                    <div class="portfolio-item"> <img src="https://source.unsplash.com/random/600x400/?woodshop,tools" alt="Workshop Scene"> </div>
+                </div>
+                <div class="mt-12 gsap-fade-in-up">
+                    <button id="add-project-button-placeholder" class="button" disabled title="Feature coming soon for admin uploads">View More (or Add Project - Admin)</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="upcoming-projects" class="py-20 md:py-28 bg-[--bg-secondary]">
+            <div class="container mx-auto px-4 text-center max-w-3xl">
+                <h2 class="section-title-gsap mb-6">From the Sketchbook</h2>
+                <p class="text-lg text-[--text-secondary] mb-12 mx-auto gsap-fade-in-up">
+                   Current inspirations, works in progress, and ideas taking shape for future creations.
+                </p>
+                <div class="text-left space-y-4 max-w-xl mx-auto gsap-fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="p-6 bg-white rounded-lg shadow-soft border border-[--border-color]">
+                        <h3 class="text-xl font-semibold text-[--primary-color] mb-2">COMING SOON</h3>
+                        <p class="text-sm text-[--text-secondary]">COMING SOON</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-soft border border-[--border-color]">
+                        <h3 class="text-xl font-semibold text-[--primary-color] mb-2">FIXME- COMING SOON PLACEHOLDER</h3>
+                        <p class="text-sm text-[--text-secondary]">FIXME- COMING SOON PLACEHOLDER</p>
+                    
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 md:py-32 px-4 bg-[--bg-secondary]">
+             <div class="container mx-auto max-w-2xl text-center gsap-fade-in">
+                <h2 class="section-title-gsap mb-6">Share Your Vision</h2>
+                 <p class="text-lg text-[--text-secondary] mb-12 max-w-xl mx-auto">
+                     have a question about my work? 
+                 </p>
+                 <div class="bg-white p-10 md:p-12 rounded-lg shadow-lg text-left border border-[--border-color]">
+                     <h3 class="text-2xl font-semibold text-[--text-primary] mb-6 text-center font-['Playfair_Display',serif]">Send a Message</h3>
+                     <form class="space-y-6" action="#" method="POST" id="contact-form-main">
+                         <div> <label for="contact-name" class="block text-[--text-secondary] text-sm font-medium mb-1">Name</label> <input type="text" id="contact-name" name="name" required class="appearance-none border border-[--border-color] rounded-md w-full py-2.5 px-3.5 text-[--text-primary] leading-tight focus:outline-none focus:border-[--primary-color]"> </div>
+                         <div> <label for="contact-email" class="block text-[--text-secondary] text-sm font-medium mb-1">Email</label> <input type="email" id="contact-email" name="email" required class="appearance-none border border-[--border-color] rounded-md w-full py-2.5 px-3.5 text-[--text-primary] leading-tight focus:outline-none focus:border-[--primary-color]"> </div>
+                         <div> <label for="contact-message" class="block text-[--text-secondary] text-sm font-medium mb-1">Your Idea or Question</label> <textarea id="contact-message" name="message" rows="5" required class="appearance-none border border-[--border-color] rounded-md w-full py-2.5 px-3.5 text-[--text-primary] leading-tight focus:outline-none focus:border-[--primary-color] resize-none" placeholder="Tell me about the piece you envision..."></textarea> </div>
+                         <div class="text-center"> <button type="submit" class="button">Send Message</button> </div>
+                     </form>
+                 </div>
+             </div>
+        </section>
+    </main>
+
+    <footer class="bg-[--bg-primary] text-[--text-tertiary] py-10 border-t border-[--border-color] gsap-fade-in">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>© <span id="current-year"></span> The Amos Atelier. All rights reserved.</p>
+            <p class="mt-2">Handcrafted Legacies, Built with Passion.</p>
+        </div>
+    </footer>
+
+    <!-- Modals Placeholder - Can be used for project details if needed -->
+    <div id="portfolio-modal" class="modal" aria-hidden="true" aria-labelledby="portfolio-modal-title" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="portfolio-modal-title">Project Details</h2>
+                <button class="close-button" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body">
+                <img id="portfolio-modal-image" src="" alt="Portfolio item detail" class="w-full h-auto max-h-80 object-cover rounded-md mb-4">
+                <p id="portfolio-modal-description">Details about the project will load here...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="button button-secondary close-button">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- GSAP Animations ---
+            const tlHero = gsap.timeline({ defaults: { ease: "power3.out" } }); // Slightly different ease
+
+            const heroHeadline = document.getElementById('hero-headline');
+            const heroHeadlineText = "The Amos Atelier: A Legacy in Wood."; // UPDATED for Grandpa
+            heroHeadline.innerHTML = heroHeadlineText.split(' ').map(word => `<span class="hero-headline-word"><span>${word}</span></span>`).join(' ');
+
+            tlHero
+                .to(heroHeadline, { opacity: 1, duration: 0.1 }) 
+                .from(".hero-headline-word span", { yPercent: 100, stagger: 0.07, duration: 0.7, delay: 0.3 })
+                .fromTo(".gsap-fade-in", { opacity: 0, y: 15 }, { opacity: 1, y: 0, stagger: 0.25, duration: 0.6 }, "-=0.6");
+
+
+            gsap.utils.toArray(".section-title-gsap").forEach(title => {
+                gsap.to(title, {
+                    opacity: 1, y: 0, duration: 0.7,
+                    scrollTrigger: { trigger: title, start: "top 88%", toggleActions: "play none none none" }
+                });
+            });
+
+            gsap.utils.toArray(".gsap-fade-in-up").forEach(elem => {
+                gsap.fromTo(elem, { opacity: 0, y: 35 }, {
+                    opacity: 1, y: 0, duration: 0.7,
+                    scrollTrigger: { trigger: elem, start: "top 88%", toggleActions: "play none none none" }
+                });
+            });
+
+            gsap.to(".craft-card", { // Changed from .service-card
+                opacity: 1, y: 0, stagger: 0.18, duration: 0.6,
+                scrollTrigger: { trigger: ".services-grid-gsap", start: "top 80%", toggleActions: "play none none none" }
+            });
+
+            gsap.to(".process-step", { // New animation for process steps
+                opacity: 1, y: 0, stagger: 0.2, duration: 0.6,
+                scrollTrigger: { trigger: ".process-steps-gsap", start: "top 80%", toggleActions: "play none none none" }
+            });
+            
+            gsap.from(".portfolio-item", { // Changed for portfolio items
+                opacity: 0, scale: 0.85, y: 40, stagger: 0.12, duration: 0.6,
+                scrollTrigger: { trigger: ".gallery-grid-gsap", start: "top 85%", toggleActions: "play none none none" }
+            });
+
+            gsap.to(".faq-item", { // Reused from Pete's
+                opacity: 1, y: 0, stagger: 0.1, duration: 0.5,
+                scrollTrigger: { trigger: ".faq-items-gsap", start: "top 80%", toggleActions: "play none none none" }
+            });
+            
+            gsap.from("footer.gsap-fade-in", { // Reused from Pete's
+                opacity: 0, y: 20, duration: 0.6,
+                 scrollTrigger: { trigger: "footer.gsap-fade-in", start: "top 95%", toggleActions: "play none none none" }
+            });
+
+
+            // --- Update Footer Year ---
+            const currentYear = new Date().getFullYear();
+            const yearSpan = document.getElementById('current-year');
+            if (yearSpan) yearSpan.textContent = currentYear;
+
+            // --- Modal Handling (Simplified for Portfolio, Contact form is main) ---
+            const portfolioModal = document.getElementById('portfolio-modal');
+            // For now, contact buttons will just scroll to contact section.
+            const openContactButtons = document.querySelectorAll('#contact-button-nav, #mobile-contact-button'); 
+            const closeButtons = document.querySelectorAll('.modal .close-button');
+
+            const openModal = (modalElement) => { if (!modalElement) return; modalElement.style.display = 'block'; modalElement.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; const firstFocusableElement = modalElement.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'); if (firstFocusableElement) firstFocusableElement.focus(); };
+            const closeModal = (modalElement) => { if (!modalElement) return; modalElement.style.display = 'none'; modalElement.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+            
+            // Portfolio Item Click to Open Modal (Example - adapt if you have unique data per item)
+            document.querySelectorAll('.portfolio-item img').forEach(item => {
+                item.addEventListener('click', () => {
+                    if(portfolioModal) {
+                        const modalImg = portfolioModal.querySelector('#portfolio-modal-image');
+                        const modalDesc = portfolioModal.querySelector('#portfolio-modal-description');
+                        const modalTitle = portfolioModal.querySelector('#portfolio-modal-title');
+
+                        modalImg.src = item.src; // Use clicked image src
+                        modalImg.alt = item.alt;
+                        modalDesc.textContent = `Details about this beautiful piece: ${item.alt}. More information can be added here, perhaps materials used or the story behind its creation.`; // Example text
+                        modalTitle.textContent = item.alt || "Artwork Detail";
+                        openModal(portfolioModal);
+                    }
+                });
+            });
+
+
+            openContactButtons.forEach(button => button.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                const contactSection = document.getElementById('contact');
+                if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth' });
+            }));
+            closeButtons.forEach(button => button.addEventListener('click', () => closeModal(button.closest('.modal'))));
+            window.addEventListener('click', (event) => { if (event.target === portfolioModal) closeModal(portfolioModal);});
+            window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && portfolioModal && portfolioModal.style.display === 'block') closeModal(portfolioModal); });
+
+
+            const hamburgerButton = document.getElementById('hamburger-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a, button');
+            if (hamburgerButton && mobileMenu) {
+                hamburgerButton.addEventListener('click', () => { const isExpanded = hamburgerButton.getAttribute('aria-expanded') === 'true'; mobileMenu.classList.toggle('hidden'); hamburgerButton.setAttribute('aria-expanded', String(!isExpanded)); hamburgerButton.classList.add('shake-animation'); setTimeout(() => { hamburgerButton.classList.remove('shake-animation'); }, 400); });
+                mobileMenuLinks.forEach(link => { link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); hamburgerButton.setAttribute('aria-expanded', 'false'); }); });
+            }
+
+             const contactFormMain = document.getElementById('contact-form-main');
+             if (contactFormMain) {
+                 contactFormMain.addEventListener('submit', (event) => {
+                     event.preventDefault();
+                     const name = contactFormMain.querySelector('#contact-name').value.trim();
+                     const email = contactFormMain.querySelector('#contact-email').value.trim();
+                     const message = contactFormMain.querySelector('#contact-message').value.trim();
+                     if (!name || !email || !message) { alert('Please fill all required fields.'); return; }
+                     alert('Message sent (Simulation). Thank you for your interest in The Amos Atelier!');
+                     contactFormMain.reset();
+                 });
+             }
+
+            const faqItems = document.querySelectorAll('.faq-item');
+             faqItems.forEach(item => {
+                const questionButton = item.querySelector('.faq-question'); const answerDiv = item.querySelector('.faq-answer'); const iconSpan = item.querySelector('.faq-icon');
+                if (questionButton && answerDiv && iconSpan) { questionButton.addEventListener('click', () => { const isOpening = !item.classList.contains('open'); faqItems.forEach(otherItem => { if (otherItem !== item && otherItem.classList.contains('open')) { otherItem.classList.remove('open'); otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false'); otherItem.querySelector('.faq-answer').setAttribute('aria-hidden', 'true'); otherItem.querySelector('.faq-answer').style.maxHeight = null; otherItem.querySelector('.faq-icon').textContent = '+'; } }); item.classList.toggle('open'); questionButton.setAttribute('aria-expanded', isOpening); answerDiv.setAttribute('aria-hidden', !isOpening); if (isOpening) { answerDiv.style.maxHeight = answerDiv.scrollHeight + 'px'; iconSpan.textContent = '−'; } else { answerDiv.style.maxHeight = null; iconSpan.textContent = '+'; } });
+                    window.addEventListener('resize', () => { if (item.classList.contains('open')) { answerDiv.style.maxHeight = null; requestAnimationFrame(() => { answerDiv.style.maxHeight = answerDiv.scrollHeight + 'px'; }); } }); } });
+
+
+        }); // End DOMContentLoaded
+    </script>
+
+</body>
+</html>
